@@ -15,16 +15,39 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
-summary(cars)
+```{r mersdata}
+mers <- read.csv('cases.csv')
+mers$hospitalized[890] <- ('2015-02-20')
+mers <- mers[-471,]
+
+library(plotly)
+library(ggplot2)
+library(lubridate)
+mers$onset2 <- ymd(mers$onset)
+mers$hospitalized2 <- ymd(mers$hospitalized)
+class(mers$onset2)
+day0 <- min(na.omit(mers$onset2))
+mers$epi.day <- as.numeric(mers$onset2 - day0)
+
+library(ggplot2)
+ggplot(data=mers) + 
+  geom_bar(mapping=aes(x=epi.day)) + 
+  labs(x='Epidemic day' , y='Case count' , title='Global count of MERS cases by date of symptom onset' ,
+       caption = "Data from : https://github.com/rambaut/MERS-Cases/blob/gh-pages/data/cases.csv")
+ggplotly(p=ggplot2::last_plot())
+
+ggplot(data=mers) + 
+  geom_bar(mapping=aes(x=epi.day , fill=country)) + 
+  labs(x='Epidemic day' , y='Case count' , title='Global count of MERS cases by date of symptom onset' ,
+       caption = "Data from : https://github.com/rambaut/MERS-Cases/blob/gh-pages/data/cases.csv")
 ```
 
 ## Including Plots
 
 You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+ mers <- read.csv('cases.csv')
+
